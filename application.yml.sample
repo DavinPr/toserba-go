@@ -1,0 +1,14 @@
+APP_NAME: ToserbaGo
+LOG_LEVEL: debug
+LOG_FORMAT: text
+
+DB_NAME: toserba
+DB_HOST: localhost
+DB_PORT: 5432
+DB_USER: postgres
+DB_PASSWORD: postgres
+DB_POOL: 5
+DB_MAX_IDLE_CONNECTIONS: 4
+DB_MIGRATION_PATH: ./db/migrations
+
+BASH_PATH: /bin/bash

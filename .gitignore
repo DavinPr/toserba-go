@@ -1,0 +1,23 @@
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+
+# Artifact
+pkg
+
+# External packages folder
+vendor/
+application.yml
+docker-compose.yml
+.out/
+*.todo
+*.idea
+.idea
+.vs/
+bin/swagger
+*.swp
+tags
+out/
+
+# Tools
+.tools
+tools/vendor
