@@ -52,4 +52,5 @@ jobs:
 
       - name: Run tests
         run: |
+          make copy-config
           make ci
