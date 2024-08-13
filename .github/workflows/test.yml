@@ -1,0 +1,46 @@
+name: Test Workflow
+
+on: [ push ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:latest
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_DB: test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_HOST_AUTH_METHOD: trust
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.20'
+
+      - name: Go version
+        run: go version
+
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: sudo apt-get update -y && sudo apt-get install -y build-essential git-core checkinstall postgresql-client
+
+      - name: Wait for PostgreSQL to be ready
+        run: until pg_isready -h localhost -p 5432 -U postgres; do sleep 1; done
+
+      - name: Run tests
+        run: |
+          make copy-config
+          make ci
