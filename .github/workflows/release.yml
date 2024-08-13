@@ -18,6 +18,7 @@ on:
           - minor
           - major
 
+jobs:
   release:
     runs-on: ubuntu-latest
     if: github.event_name == 'workflow_dispatch' || github.event_name == 'push' && github.ref == 'refs/heads/develop'
