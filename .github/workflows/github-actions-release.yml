@@ -55,53 +55,6 @@ jobs:
           make copy-config
           make ci
 
-  release-develop:
-    runs-on: ubuntu-latest
-    needs: [ test ]
-    if: github.ref == 'refs/heads/develop'
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Get latest tag
-        id: get_tag
-        run: |
-          latest_tag=$(git tag | sort -V | tail -n 1)
-          if [ -z "$latest_tag" ]; then
-          latest_tag="v0.0.0"
-          fi
-          echo "Latest tag: $latest_tag"
-          echo "::set-output name=latest_tag::$latest_tag"
-
-      - name: Determine new beta tag
-        id: new_tag
-        run: |
-          latest_tag=${{ steps.get_tag.outputs.latest_tag }}
-          major=${BASH_REMATCH[1]}
-          minor=${BASH_REMATCH[2]}
-          patch=${BASH_REMATCH[3]}
-          beta=${BASH_REMATCH[4]}
-          if [[ $latest_tag =~ ^v([0-9]+)\.([0-9]+)\.([0-9]+)-beta\.([0-9]+)$ ]]; then
-            new_tag="v${major}.${minor}.${patch + 1}-beta.$((beta + 1))"
-          elif [[ $latest_tag =~ ^v([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
-            new_tag="v${major}.${minor}.${patch + 1}-beta.1"
-          else
-            new_tag="v0.0.0-beta.1"
-          fi
-          echo "New beta tag: $new_tag"
-          echo "::set-output name=new_tag::$new_tag"
-
-      - name: Create beta tag
-        run: |
-          new_tag=${{ steps.new_tag.outputs.new_tag }}
-          git config --global user.name "${{ github.actor }}"
-          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
-          git tag ${new_tag}
-          git push origin ${new_tag}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
   release:
     runs-on: ubuntu-latest
     needs: [ test ]
