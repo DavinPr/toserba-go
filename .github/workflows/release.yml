@@ -4,8 +4,9 @@ on:
   push:
     branches:
       - develop
-      - main
   workflow_dispatch:
+    branches:
+      - main
     inputs:
       release_type:
         description: 'Type of release'
@@ -19,7 +20,7 @@ on:
 
   release:
     runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'push' && github.ref == 'refs/heads/develop'
 
     steps:
       - name: Checkout code
