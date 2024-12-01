@@ -18,6 +18,16 @@ on:
           - minor
           - major
 
+.job_template:
+  get_latest_tag:
+    - |
+      latest_tag=$(git tag | sort -V | tail -n 1)
+      if [ -z "$latest_tag" ]; then
+        latest_tag="v0.0.0"
+      fi
+      echo "Latest tag: $latest_tag"
+      echo "::set-output name=latest_tag::$latest_tag"
+
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -29,13 +39,7 @@ jobs:
 
       - name: Get latest tag
         id: get_tag
-        run: |
-          latest_tag=$(git describe --tags `git rev-list --tags --max-count=1`)
-          if [ -z "$latest_tag" ]; then
-            latest_tag="v0.0.0"
-          fi
-          echo "Latest tag: $latest_tag"
-          echo "::set-output name=latest_tag::$latest_tag"
+        run: !reference [.job_template get_latest_tag]
 
       - name: Determine new tag
         id: new_tag
